@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">DispatchLabor: USER</string>
+    <string name="google_map_key">AIzaSyB7o4aFDhM57QgoL3ArtQrJEd5hs29PqKs</string>
+    <string name="default_notification_channel_id">user_dispatch_default_channel</string>
+
+</resources>
