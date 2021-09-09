@@ -371,7 +371,7 @@ class _StartJobViewState extends State<StartJobView> {
         JobLog record = new JobLog(
             uid: (jobLogCount+1).toString(),
             jobNumber: job.jobNumber,
-            jobDesc: job.jobNumber,
+            jobDesc: job.jobDesc,
             jobPin: job.jobPin,
             jobRate: job.jobRate,
             priceQuote: job.priceQuote,

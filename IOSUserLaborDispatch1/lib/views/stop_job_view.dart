@@ -42,13 +42,14 @@ class _StopJobViewState extends State<StopJobView> {
   bool showIndicator = true;
   final picker = ImagePicker();
   Job job = new Job();
-  JobLog jobLog = new JobLog();
+  // JobLog jobLog = new JobLog();
   List<Job> jobs = new List();
   JobApi api = new JobApi();
   File image = null;
   JobLogApi jobLogApi = new JobLogApi();
   var currentLocation;
   var lat = 0.0, long = 0.0;
+  var jobLogCount = 0;
 
   SendNotificationApi notificationApi = new SendNotificationApi();
   TextEditingController priceQuoteController = new TextEditingController();
@@ -71,21 +72,28 @@ class _StopJobViewState extends State<StopJobView> {
       jobs = value;
       if(jobs.length > 0){
         job = jobs[0];
-        getJobLog();
+        // getJobLog();
         priceQuoteController.text = job.priceQuote;
         quantityController.text = job.quantity;
+
       }
       isLoading = false;
       setState(() { });
     });
-  }
 
-  getJobLog(){
-    jobLogApi.getJobLog(job.jobNumber).then((value) {
-      jobLog = value;
+    jobLogApi.getJobLogsCount(companyId, pin).then((value) {
+      jobLogCount = value;
+      print(jobLogCount);
       setState(() { });
     });
   }
+
+  // getJobLog(){
+  //   jobLogApi.getJobLog(job.jobNumber).then((value) {
+  //     jobLog = value;
+  //     setState(() { });
+  //   });
+  // }
 
   String getAddress(Job job){
     List<String> data  = [];
@@ -146,7 +154,7 @@ class _StopJobViewState extends State<StopJobView> {
               onChanged: (value) async {
                 setState(() {
                   job = value;
-                  getJobLog();
+                  // getJobLog();
                 });
               },
             )));
@@ -253,9 +261,9 @@ class _StopJobViewState extends State<StopJobView> {
                   btnTextSize: 10,
                   btnTextColor: AppColors.APP_WHITE_COLOR,
                   onPressed: () {
-                    if(jobLog.imageUrl.isNotEmpty){
-                      launchUrl(jobLog.imageUrl);
-                    }
+                    // if(jobLog.imageUrl.isNotEmpty){
+                    //   launchUrl(jobLog.imageUrl);
+                    // }
                   },
                 ),
               ],
@@ -322,15 +330,32 @@ class _StopJobViewState extends State<StopJobView> {
       var date = new DateTime.now().toString();
       String result = date.substring(0, date.indexOf('.'));
 
-      jobLog.jobFlag = "STOPPED";
-      jobLog.stopLatitude = lat.toString();
-      jobLog.stopLongitude = long.toString();
-      jobLog.stopTime = result;
-
       job.jobFlag = "STOPPED";
       job.priceQuote = priceQuoteController.text;
       job.quantity = quantityController.text;
       job.stopTime = result;
+
+      JobLog jobLog = new JobLog(
+          uid: (jobLogCount+1).toString(),
+          jobNumber: job.jobNumber,
+          jobDesc: job.jobDesc,
+          jobPin: job.jobPin,
+          jobRate: job.jobRate,
+          priceQuote: job.priceQuote,
+          quantity: job.quantity,
+          companyId: companyId,
+          jobFlag: job.jobFlag,
+          jobHours: '0',
+          pdfFileName: job.pdfFileName,
+          pdfUrl: job.pdfUrl,
+          imageFileName: '',
+          imageUrl: '',
+          startLatitude: lat.toString(),
+          startLongitude: long.toString(),
+          startTime: result,
+          startingTeg: '0',
+          stopingTeg: '0'
+      );
 
       if (image != null) {
         CloudStorageService _cloudService = new CloudStorageService();
@@ -340,7 +365,7 @@ class _StopJobViewState extends State<StopJobView> {
           jobLog.imageFileName = '${job.jobNumber}_image';
           jobLog.imageUrl = url;
           api.updateJob(job).then((val){
-            jobLogApi.updateJobLog(jobLog).then((value){
+            jobLogApi.saveJobLog(jobLog).then((value){
               if(value is bool && value){
                 getJobs();
                 setState(() {
@@ -362,7 +387,7 @@ class _StopJobViewState extends State<StopJobView> {
       }
       else{
         api.updateJob(job).then((val){
-          jobLogApi.updateJobLog(jobLog).then((value){
+          jobLogApi.saveJobLog(jobLog).then((value){
             if(value is bool && value){
               getJobs();
               setState(() {
