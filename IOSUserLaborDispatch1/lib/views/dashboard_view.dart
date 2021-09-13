@@ -40,19 +40,19 @@ class _DashboardState extends State<Dashboard> {
     menus.add({
       'name': 'Start A Job',
       'color': AppColors.APP_LIGHT_GREEN_COLOR,
-      'icons': Icons.play_circle_fill,
+      'icons': Icons.play_arrow_sharp,
       'route': companyId == null ? Setup(route: StartJobView(),) : StartJobView(),
     });
     menus.add({
       'name': 'Stop A Job',
       'color': AppColors.APP_RED_COLOR,
-      'icons': Icons.stop_circle_sharp,
+      'icons': Icons.stop,
       'route': companyId == null ? Setup() : StopJobView(),
     });
     menus.add({
       'name': 'Reports',
       'color': AppColors.APP_LIGHT_GREEN_COLOR,
-      'icons': Icons.request_page_outlined,
+      'icons': Icons.dvr,
       'route': companyId == null ? Setup() : Reports(),
     });
     menus.add({
@@ -76,7 +76,7 @@ class _DashboardState extends State<Dashboard> {
     menus.add({
       'name': 'Images & Documents',
       'color': AppColors.APP_BLUE_COLOR,
-      'icons': Icons.assessment,
+      'icons': Icons.insert_drive_file_rounded,
       'route': companyId == null ? Setup() : Images(),
     });
     setState(() { });
@@ -105,7 +105,7 @@ class _DashboardState extends State<Dashboard> {
     Widget screenUI() {
       return GridView.builder(
           shrinkWrap: true,
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.all(5),
           itemCount: menus.length ,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: _crossAxisCount,

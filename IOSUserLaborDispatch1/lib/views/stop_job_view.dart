@@ -39,17 +39,21 @@ class _StopJobViewState extends State<StopJobView> {
   var companyId, pin;
   bool isLoading = true;
   bool visibleButton = true;
+  bool visibleImageButton = true;
   bool showIndicator = true;
   final picker = ImagePicker();
   Job job = new Job();
+
   // JobLog jobLog = new JobLog();
   List<Job> jobs = new List();
   JobApi api = new JobApi();
-  File image = null;
+
+  // File image = null;
   JobLogApi jobLogApi = new JobLogApi();
   var currentLocation;
   var lat = 0.0, long = 0.0;
   var jobLogCount = 0;
+  var imageUrl = '';
 
   SendNotificationApi notificationApi = new SendNotificationApi();
   TextEditingController priceQuoteController = new TextEditingController();
@@ -67,24 +71,23 @@ class _StopJobViewState extends State<StopJobView> {
     super.initState();
   }
 
-  getJobs(){
+  getJobs() {
     api.getStartedJobs(companyId, pin).then((value) {
       jobs = value;
-      if(jobs.length > 0){
+      if (jobs.length > 0) {
         job = jobs[0];
         // getJobLog();
         priceQuoteController.text = job.priceQuote;
         quantityController.text = job.quantity;
-
       }
       isLoading = false;
-      setState(() { });
+      setState(() {});
     });
 
     jobLogApi.getJobLogsCount(companyId, pin).then((value) {
       jobLogCount = value;
       print(jobLogCount);
-      setState(() { });
+      setState(() {});
     });
   }
 
@@ -95,11 +98,14 @@ class _StopJobViewState extends State<StopJobView> {
   //   });
   // }
 
-  String getAddress(Job job){
-    List<String> data  = [];
-    job.adress.toJson().entries.forEach((e) => data.add(e.value.toString()));
-    data = data.sublist(2);
-    return data.join(', ');
+  String getAddress(Job job) {
+    if (job.adress != null) {
+      List<String> data = [];
+      job.adress.toJson().entries.forEach((e) => data.add(e.value.toString()));
+      data = data.sublist(2);
+      return data.join(', ');
+    }
+    return 'Address';
   }
 
   getLocation() async {
@@ -111,7 +117,7 @@ class _StopJobViewState extends State<StopJobView> {
         lat = value.latitude;
         long = value.longitude;
         showIndicator = false;
-        setState(() { });
+        setState(() {});
       });
     } on Exception {
       currentLocation = null;
@@ -124,40 +130,39 @@ class _StopJobViewState extends State<StopJobView> {
 
   @override
   Widget build(BuildContext context) {
-
     Size screenSize = MediaQuery.of(context).size;
 
     final jobsDropdown = Container(
         padding: EdgeInsets.only(left: 5, right: screenSize.width * 0.3),
         child: DropdownButtonHideUnderline(
             child: new DropdownButton<Job>(
-              // isExpanded: true,
-              icon: Padding(
-                padding: EdgeInsets.only(right: 10),
-                child: Icon(
-                  Icons.arrow_drop_down_sharp,
-                  color: Colors.grey.shade500,
-                ),
-              ),
-              value: job,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: AppColors.APP_LIGHT_GREEN_COLOR,
-              ),
-              items: jobs.map((value) {
-                return new DropdownMenuItem(
-                  value: value,
-                  child: new Text(value.jobNumber),
-                );
-              }).toList(),
-              onChanged: (value) async {
-                setState(() {
-                  job = value;
-                  // getJobLog();
-                });
-              },
-            )));
+          // isExpanded: true,
+          icon: Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: Icon(
+              Icons.arrow_drop_down_sharp,
+              color: Colors.grey.shade500,
+            ),
+          ),
+          value: job,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: AppColors.APP_LIGHT_GREEN_COLOR,
+          ),
+          items: jobs.map((value) {
+            return new DropdownMenuItem(
+              value: value,
+              child: new Text(value.jobNumber),
+            );
+          }).toList(),
+          onChanged: (value) async {
+            setState(() {
+              job = value;
+              // getJobLog();
+            });
+          },
+        )));
 
     final priceQuoteField = TextFormField(
       controller: priceQuoteController,
@@ -188,102 +193,138 @@ class _StopJobViewState extends State<StopJobView> {
     Widget screenUI() {
       return Container(
         padding: EdgeInsets.all(20),
-        child: isLoading ? Loader() : jobs.length == 0 ? NoRecordFound(msg: 'No Job Found') : ListView(
-          children: [
-            showIndicator ? Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                LinearProgressIndicator(
-                  backgroundColor: AppColors.APP_PINK_COLOR.withOpacity(0.2),
-                  color: AppColors.APP_PINK_COLOR,
-                  semanticsLabel: 'Linear progress indicator',
-                ),
-                SizedBox(height: 10),
-                Text('Updating Location...',
-                  style: TextStyle(
-                    color: AppColors.APP_BLACK_COLOR,
-                  ),),
-                SizedBox(height: 10),
-              ],
-            ) :  Container(),
-            Text('Click below to select a different Job:', style: TextStyle(
-              color: AppColors.APP_LIGHT_GREEN_COLOR,
-            ),),
-            SizedBox(height: 10),
-            jobsDropdown,
-            SizedBox(height: 10),
-            Text('${job.jobDesc}'),
-            SizedBox(height: 10),
-            Text('${job.jobPin}'),
-            SizedBox(height: 10,),
-            Text('${job.companyId}'),
-            SizedBox(height: 10,),
-            Text('${job.jobFlag}'),
-            SizedBox(height: 10,),
-            Text('${job.startTime}'),
-            SizedBox(height: 10,),
-            Text('${job.stopTime}'),
-            Row(
-              children: [
-                Container(
-                    width: screenSize.width * 0.4,
-                    child: priceQuoteField
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Container(
-                  width: screenSize.width * 0.4,
-                    child: quantityField
-                ),
-              ],
-            ),
-            SizedBox(height: 10,),
-            Text(getAddress(job), style: TextStyle(fontSize: 10),),
-            SizedBox(height: 10,),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buttonWidget(
-                  btnText: 'Select Image File'.toUpperCase(),
-                  btnColor: AppColors.APP_ORANGE_COLOR,
-                  btnTextSize: 10,
-                  btnTextColor: AppColors.APP_WHITE_COLOR,
-                  onPressed: selectCamera
-                ),
-                buttonWidget(
-                  btnText: 'Display Image'.toUpperCase(),
-                  btnColor: AppColors.APP_ORANGE_COLOR,
-                  btnTextSize: 10,
-                  btnTextColor: AppColors.APP_WHITE_COLOR,
-                  onPressed: () {
-                    // if(jobLog.imageUrl.isNotEmpty){
-                    //   launchUrl(jobLog.imageUrl);
-                    // }
-                  },
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            visibleButton ? buttonWidget(
-              btnText: 'Stop Job',
-              btnTextSize: 16,
-              btnColor: AppColors.APP_RED_COLOR,
-              btnTextColor: AppColors.APP_WHITE_COLOR,
-              onPressed: stopJob,
-            ) : Loader(),
-            SizedBox(
-              height: 20,
-            ),
-
-          ],
-        ),
+        child: isLoading
+            ? Loader()
+            : ListView(
+                children: [
+                  showIndicator
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            LinearProgressIndicator(
+                              backgroundColor:
+                                  AppColors.APP_PINK_COLOR.withOpacity(0.2),
+                              color: AppColors.APP_PINK_COLOR,
+                              semanticsLabel: 'Linear progress indicator',
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'Updating Location...',
+                              style: TextStyle(
+                                color: AppColors.APP_BLACK_COLOR,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        )
+                      : Container(),
+                  Text(
+                    'Click below to select a different Job:',
+                    style: TextStyle(
+                      color: AppColors.APP_LIGHT_GREEN_COLOR,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  jobsDropdown,
+                  SizedBox(height: 10),
+                  Text('${job.jobDesc ?? 'Job Description'}'),
+                  SizedBox(height: 10),
+                  Text('${job.jobPin ?? 'Job Pin'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('${job.companyId ?? 'Company Id'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('${job.jobFlag ?? 'Job Flag'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('${job.jobDate ?? 'Job Date'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('${job.startTime ?? 'Start Time'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('${job.stopTime ?? 'Stop Time'}'),
+                  Row(
+                    children: [
+                      Container(
+                          width: screenSize.width * 0.4,
+                          child: priceQuoteField),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                          width: screenSize.width * 0.4, child: quantityField),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    getAddress(job),
+                    style: TextStyle(fontSize: 10),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  visibleImageButton
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            buttonWidget(
+                                btnText: 'Select Image File'.toUpperCase(),
+                                btnColor: AppColors.APP_ORANGE_COLOR,
+                                btnTextSize: 10,
+                                btnTextColor: AppColors.APP_WHITE_COLOR,
+                                onPressed: () {
+                                  if (jobs.length > 0) {
+                                    selectCamera();
+                                  }
+                                }),
+                            buttonWidget(
+                              btnText: 'Display Image'.toUpperCase(),
+                              btnColor: AppColors.APP_ORANGE_COLOR,
+                              btnTextSize: 10,
+                              btnTextColor: AppColors.APP_WHITE_COLOR,
+                              onPressed: () {
+                                if (imageUrl.isNotEmpty && jobs.length > 0) {
+                                  showImage(screenSize, imageUrl);
+                                }
+                              },
+                            ),
+                          ],
+                        )
+                      : Loader(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  visibleButton
+                      ? buttonWidget(
+                          btnText: 'Stop Job',
+                          btnTextSize: 16,
+                          btnColor: AppColors.APP_RED_COLOR,
+                          btnTextColor: AppColors.APP_WHITE_COLOR,
+                          onPressed: () {
+                            if (jobs.length > 0) {
+                              stopJob();
+                            }
+                          },
+                        )
+                      : Loader(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
       );
     }
 
@@ -307,22 +348,37 @@ class _StopJobViewState extends State<StopJobView> {
   }
 
   Future selectCamera() async {
-    var permissionStatus = await getPermission(context, AppConstants.cameraPermissionValue);
+    var permissionStatus =
+        await getPermission(context, AppConstants.cameraPermissionValue);
     if (permissionStatus) {
-      var image = await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+      var image =
+          await picker.getImage(source: ImageSource.camera, imageQuality: 50);
       setState(() {
         if (image != null) {
-          this.image = File(image.path);
+          var selectedImage = File(image.path);
+          setState(() {
+            visibleImageButton = false;
+          });
+          CloudStorageService _cloudService = new CloudStorageService();
+          _cloudService
+              .uploadFile(file: selectedImage, title: '${job.jobNumber}_image')
+              .then((url) {
+            ToastUtil.showToast(context, 'Image Uploaded Successfully');
+            imageUrl = url;
+            setState(() {
+              visibleImageButton = true;
+            });
+          });
         }
       });
     }
   }
 
   stopJob() {
-    if(lat == 0.0 || long == 0.0){
-      ToastUtil.showToast(context, 'Please On Current Location & Refresh again to stop the job');
-    }
-    else{
+    if (lat == 0.0 || long == 0.0) {
+      ToastUtil.showToast(context,
+          'Please On Current Location & Refresh again to stop the job');
+    } else {
       setState(() {
         visibleButton = false;
       });
@@ -336,7 +392,7 @@ class _StopJobViewState extends State<StopJobView> {
       job.stopTime = result;
 
       JobLog jobLog = new JobLog(
-          uid: (jobLogCount+1).toString(),
+          uid: (jobLogCount + 1).toString(),
           jobNumber: job.jobNumber,
           jobDesc: job.jobDesc,
           jobPin: job.jobPin,
@@ -354,62 +410,51 @@ class _StopJobViewState extends State<StopJobView> {
           startLongitude: long.toString(),
           startTime: result,
           startingTeg: '0',
-          stopingTeg: '0'
-      );
+          stopingTeg: '0');
 
-      if (image != null) {
-        CloudStorageService _cloudService = new CloudStorageService();
-        _cloudService
-            .uploadFile(file: image, title: '${job.jobNumber}_image')
-            .then((url) {
-          jobLog.imageFileName = '${job.jobNumber}_image';
-          jobLog.imageUrl = url;
-          api.updateJob(job).then((val){
-            jobLogApi.saveJobLog(jobLog).then((value){
-              if(value is bool && value){
-                getJobs();
-                setState(() {
-                  isLoading = true;
-                  visibleButton = true;
-                });
-                sendNotification(job);
-                ToastUtil.showToast(context, 'Job Stopped');
-              }
-              else if(value is bool && !value){
-                ToastUtil.showToast(context, 'Error');
-              }
-              else if(value is String){
-                ToastUtil.showToast(context, 'Error : $value');
-              }
+      if (imageUrl.isNotEmpty) {
+        jobLog.imageFileName = '${job.jobNumber}_image';
+        jobLog.imageUrl = imageUrl;
+      }
+
+      api.updateJob(job).then((val) {
+        jobLogApi.saveJobLog(jobLog).then((value) {
+          if (value is bool && value) {
+            getJobs();
+            setState(() {
+              isLoading = true;
+              visibleButton = true;
             });
-          });
+            sendNotification(job);
+            ToastUtil.showToast(context, 'Job Stopped');
+          } else if (value is bool && !value) {
+            ToastUtil.showToast(context, 'Error');
+          } else if (value is String) {
+            ToastUtil.showToast(context, 'Error : $value');
+          }
         });
-      }
-      else{
-        api.updateJob(job).then((val){
-          jobLogApi.saveJobLog(jobLog).then((value){
-            if(value is bool && value){
-              getJobs();
-              setState(() {
-                isLoading = true;
-                visibleButton = true;
-              });
-              sendNotification(job);
-              ToastUtil.showToast(context, 'Job Stopped');
-            }
-            else if(value is bool && !value){
-              ToastUtil.showToast(context, 'Error');
-            }
-            else if(value is String){
-              ToastUtil.showToast(context, 'Error : $value');
-            }
-          });
-        });
-      }
+      });
     }
   }
 
-  sendNotification(Job job){
-    notificationApi.sendNotification(new NotificationModel(title: "Job Stopped", body: "Job Number: "+job.jobNumber+" | User Pin: "+job.jobPin, companyId: job.companyId));
+  showImage(screenSize, image) async {
+    showDialog(
+        context: context,
+        builder: (_) => Dialog(
+              child: Container(
+                width: screenSize.width * 0.8,
+                height: screenSize.height * 0.6,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(image), fit: BoxFit.cover)),
+              ),
+            ));
+  }
+
+  sendNotification(Job job) {
+    notificationApi.sendNotification(new NotificationModel(
+        title: "Job Stopped",
+        body: "Job Number: " + job.jobNumber + " | User Pin: " + job.jobPin,
+        companyId: job.companyId));
   }
 }

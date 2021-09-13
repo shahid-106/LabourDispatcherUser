@@ -45,6 +45,7 @@ class buttonWidget extends StatelessWidget {
             color: btnColor,
             child: Text(
               btnText,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 // fontWeight: FontWeight.bold,
                   fontFamily: fontFamily,

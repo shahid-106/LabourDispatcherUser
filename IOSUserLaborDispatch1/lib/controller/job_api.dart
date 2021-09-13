@@ -43,14 +43,15 @@ class JobApi {
         result.value.forEach((key, childSnapshot) {
           userJobs.add(Job.fromJson(Map.from(childSnapshot)));
         });
-        // print(userJobs.length);
+        print(userJobs.length);
         userJobs = userJobs.where((element) => element.jobPin == pin).toList();
         userJobs = userJobs.where((element) => element.jobFlag != 'STARTED').toList();
+        print(userJobs.length);
         //Job Date <= 30 Days
         var monthAgoDate = DateTime.now().subtract(Duration(days: 31));
         userJobs.removeWhere((element) => DateTime.parse(element.jobDate).isBefore(monthAgoDate));
         userJobs = userJobs.reversed.toList();
-        // print(userJobs.length);
+        print(userJobs.length);
       } else {
         print('getNotStartedJobs() no jobs found');
       }
