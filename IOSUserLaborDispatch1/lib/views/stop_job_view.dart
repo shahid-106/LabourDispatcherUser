@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -79,6 +80,9 @@ class _StopJobViewState extends State<StopJobView> {
         // getJobLog();
         priceQuoteController.text = job.priceQuote;
         quantityController.text = job.quantity;
+      }
+      else{
+        job = new Job();
       }
       isLoading = false;
       setState(() {});
@@ -251,14 +255,11 @@ class _StopJobViewState extends State<StopJobView> {
                   ),
                   Text('${job.stopTime ?? 'Stop Time'}'),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Container(
                           width: screenSize.width * 0.4,
                           child: priceQuoteField),
-                    ],
-                  ),
-                  Row(
-                    children: [
                       Container(
                           width: screenSize.width * 0.4, child: quantityField),
                     ],
@@ -271,10 +272,7 @@ class _StopJobViewState extends State<StopJobView> {
                     style: TextStyle(fontSize: 10),
                   ),
                   SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   visibleImageButton
                       ? Row(
@@ -304,8 +302,22 @@ class _StopJobViewState extends State<StopJobView> {
                           ],
                         )
                       : Loader(),
+                  imageUrl.isNotEmpty
+                      ? Column(
+                    children: [
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('${job.jobNumber}_image',
+                        style: TextStyle(fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ) : SizedBox(
+                    height: 10,
+                  ),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   visibleButton
                       ? buttonWidget(

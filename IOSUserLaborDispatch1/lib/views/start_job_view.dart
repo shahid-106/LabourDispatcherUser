@@ -15,6 +15,7 @@ import 'package:ios_user_labor_dispatch_1/controller/jobLog_api.dart';
 import 'package:ios_user_labor_dispatch_1/controller/job_api.dart';
 import 'package:ios_user_labor_dispatch_1/model/jobLog.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/no_record_found.dart';
+import 'package:ios_user_labor_dispatch_1/shared_widgets/showDialog.dart';
 import 'package:ios_user_labor_dispatch_1/views/pdf_view.dart';
 import 'package:location/location.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -74,6 +75,9 @@ class _StartJobViewState extends State<StartJobView> {
       if (jobs.length > 0) {
         job = jobs[0];
         getJobLog();
+      }
+      else{
+        job = new Job();
       }
       isLoading = false;
       setState(() {});
@@ -314,7 +318,7 @@ class _StartJobViewState extends State<StartJobView> {
                       ),
                     ],
                   ),
-                  job.pdfFileName != null
+                  job.pdfFileName != null && job.pdfFileName.isNotEmpty
                       ? Column(
                           children: [
                             SizedBox(
@@ -334,7 +338,7 @@ class _StartJobViewState extends State<StartJobView> {
                           height: 10,
                         ),
                   visibleDocumentButton
-                      ? Row(
+                      ? job.pdfUrl != null && job.pdfUrl.isNotEmpty ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             buttonWidget(
@@ -342,16 +346,19 @@ class _StartJobViewState extends State<StartJobView> {
                               btnColor: AppColors.APP_ORANGE_COLOR,
                               btnTextColor: AppColors.APP_WHITE_COLOR,
                               width: screenSize.width * 0.38,
-                              btnTextSize: 10,
-                              onPressed: () async {
+                              btnTextSize: 8,
+                              onPressed: () {
                                 print(job.pdfUrl);
                                 if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
-                                  String path = await ExtStorage
-                                      .getExternalStoragePublicDirectory(
-                                          ExtStorage.DIRECTORY_DOWNLOADS);
-                                  String fullPath = "$path/${job.pdfFileName}";
-                                  print('full path $fullPath');
-                                  downloadFile(job.pdfUrl, fullPath);
+                                  showAlertWithTwoButtons(context, 'Are you sure you want to download this document?',
+                                      onPressed: () async {
+                                    String path = await ExtStorage
+                                        .getExternalStoragePublicDirectory(
+                                        ExtStorage.DIRECTORY_DOWNLOADS);
+                                    String fullPath = "$path/${job.pdfFileName}";
+                                    print('full path $fullPath');
+                                    downloadFile(job.pdfUrl, fullPath);
+                                  });
                                 } else {
                                   print('not found');
                                 }
@@ -375,7 +382,7 @@ class _StartJobViewState extends State<StartJobView> {
                               },
                             ),
                           ],
-                        )
+                        ) : Container()
                       : Loader(),
                   SizedBox(
                     height: 20,

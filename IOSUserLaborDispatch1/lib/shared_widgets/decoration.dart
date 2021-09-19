@@ -181,10 +181,10 @@ class DecorationBoxes {
 class DecorationInputs {
   static InputDecoration textBoxInputDecoration({String label}) {
     return InputDecoration(
-      // isDense: true,
+      isDense: true,
       hintText: label??'',
       // hintStyle: TextStyle(fontFamily: 'Montserrat', color: AppColors.APP_PINK_COLOR, fontSize: 12),
-      // contentPadding: EdgeInsets.all(10),
+      contentPadding: EdgeInsets.fromLTRB(0, 10, 10, 10),
       errorBorder: UnderlineInputBorder(
           // borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: AppColors.APP_RED_COLOR)),

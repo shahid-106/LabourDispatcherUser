@@ -116,7 +116,9 @@ class _DashboardState extends State<Dashboard> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => menus[index]['route']));
+                        builder: (context) => menus[index]['route'])).then((value) {
+                  getCompanyId();
+                });
               },
               child: Container(
                 margin: EdgeInsets.all(10),
@@ -146,8 +148,8 @@ class _DashboardState extends State<Dashboard> {
                       shape: CircleBorder(),
                     ),
                     Container(
-                      width: screenSize.width * 0.2,
-                        child: Text(menus[index]['name'], style: TextStyle(color: AppColors.APP_BLACK_COLOR), textAlign: TextAlign.center,)
+                      // width: screenSize.width * 0.2,
+                        child: Text(menus[index]['name'], style: TextStyle(color: AppColors.APP_BLACK_COLOR, fontSize: 12), textAlign: TextAlign.center,)
                     )
                   ],
                 ),

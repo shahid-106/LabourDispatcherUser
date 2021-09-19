@@ -28,7 +28,7 @@ showAlertWithTwoButtons(BuildContext context, String text, {Function onPressed})
                         Text(
                           text,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -57,7 +57,7 @@ showAlertWithTwoButtons(BuildContext context, String text, {Function onPressed})
                           padding: EdgeInsets.all(12),
                           child: Text('Yes',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: Colors.white, fontSize: 12)),
                         ),
                         RaisedButton(
                           color: AppColors.APP_PRIMARY_COLOR,
@@ -70,7 +70,7 @@ showAlertWithTwoButtons(BuildContext context, String text, {Function onPressed})
                           padding: EdgeInsets.all(12),
                           child: Text('No',
                               style:
-                              TextStyle(color: Colors.white, fontSize: 14)),
+                              TextStyle(color: Colors.white, fontSize: 12)),
                         ),
                       ],
                     ),
