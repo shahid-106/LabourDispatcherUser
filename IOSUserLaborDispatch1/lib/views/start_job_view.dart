@@ -87,7 +87,7 @@ class _StartJobViewState extends State<StartJobView> {
   String getAddress(Job job) {
     if (job.adress != null) {
       List<String> data = [];
-      job.adress.toJson().entries.forEach((e) => data.add(e.value.toString()));
+      job.adress.toJsonWithoutCoordinates().entries.forEach((e) => data.add(e.value.toString()));
       data = data.sublist(2);
       return data.join(', ');
     }
@@ -294,7 +294,7 @@ class _StartJobViewState extends State<StartJobView> {
                       buttonWidget(
                         btnText: 'Display on Map'.toUpperCase(),
                         btnColor: AppColors.APP_ORANGE_COLOR,
-                        btnTextSize: 10,
+                        btnTextSize: 9,
                         width: screenSize.width * 0.38,
                         btnTextColor: AppColors.APP_WHITE_COLOR,
                         onPressed: () {
@@ -307,7 +307,7 @@ class _StartJobViewState extends State<StartJobView> {
                       buttonWidget(
                         btnText: 'Call Customer'.toUpperCase(),
                         btnColor: AppColors.APP_ORANGE_COLOR,
-                        btnTextSize: 10,
+                        btnTextSize: 9,
                         width: screenSize.width * 0.38,
                         btnTextColor: AppColors.APP_WHITE_COLOR,
                         onPressed: () {
@@ -342,11 +342,11 @@ class _StartJobViewState extends State<StartJobView> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             buttonWidget(
-                              btnText: 'Download Document'.toUpperCase(),
+                              btnText: 'Download Documents'.toUpperCase(),
                               btnColor: AppColors.APP_ORANGE_COLOR,
                               btnTextColor: AppColors.APP_WHITE_COLOR,
                               width: screenSize.width * 0.38,
-                              btnTextSize: 8,
+                              btnTextSize: 9,
                               onPressed: () {
                                 print(job.pdfUrl);
                                 if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
@@ -366,7 +366,7 @@ class _StartJobViewState extends State<StartJobView> {
                             ),
                             buttonWidget(
                               btnText: 'Open Document'.toUpperCase(),
-                              btnTextSize: 10,
+                              btnTextSize: 9,
                               btnColor: AppColors.APP_ORANGE_COLOR,
                               btnTextColor: AppColors.APP_WHITE_COLOR,
                               width: screenSize.width * 0.38,
@@ -377,7 +377,9 @@ class _StartJobViewState extends State<StartJobView> {
                                       MaterialPageRoute(
                                           builder: (context) => PdfView(
                                                 url: job.pdfUrl,
-                                              )));
+                                              )
+                                      )
+                                  );
                                 }
                               },
                             ),

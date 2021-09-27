@@ -105,7 +105,7 @@ class _StopJobViewState extends State<StopJobView> {
   String getAddress(Job job) {
     if (job.adress != null) {
       List<String> data = [];
-      job.adress.toJson().entries.forEach((e) => data.add(e.value.toString()));
+      job.adress.toJsonWithoutCoordinates().entries.forEach((e) => data.add(e.value.toString()));
       data = data.sublist(2);
       return data.join(', ');
     }
