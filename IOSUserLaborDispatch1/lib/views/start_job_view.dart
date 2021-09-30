@@ -61,7 +61,7 @@ class _StartJobViewState extends State<StartJobView> {
       getJobs();
       jobLogApi.getJobLogsCount(companyId, pin).then((value) {
         jobLogCount = value;
-        print(jobLogCount);
+        // print(jobLogCount);
         setState(() {});
       });
     });
@@ -126,20 +126,14 @@ class _StartJobViewState extends State<StartJobView> {
     if (await canLaunch(command)) {
       await launch(command);
     } else {
-      print('could not launch $command');
-      // showAlertDialog('$command not_valid_phone_no');
+      // print('could not launch $command');
+      ToastUtil.showToast(context, 'Invalid Phone No');
     }
   }
 
   static Future<void> openMap(double latitude, double longitude) async {
-    String googleUrl =
-        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
-    // print(googleUrl);
-    // if (await canLaunch(googleUrl)) {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     await launch(googleUrl);
-    // } else {
-    //   throw 'Could not open the map.';
-    // }
   }
 
   Future downloadFile(String url, String savePath) async {
@@ -270,11 +264,12 @@ class _StartJobViewState extends State<StartJobView> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.priceQuote ?? 'Price Quote'}'),
-                  SizedBox(
-                    height: 10,
+                  Row(
+                    children: [
+                      Text('${job.priceQuote == null ? 'Price Quote' : 'Price Quote: '+job.priceQuote}'),
+                      Text('${job.quantity == null ? ', Quantity ' : ', Quantity: '+job.quantity}'),
+                    ],
                   ),
-                  Text('${job.quantity ?? 'Quantity'}'),
                   SizedBox(
                     height: 10,
                   ),
@@ -348,7 +343,7 @@ class _StartJobViewState extends State<StartJobView> {
                               width: screenSize.width * 0.38,
                               btnTextSize: 9,
                               onPressed: () {
-                                print(job.pdfUrl);
+                                // print(job.pdfUrl);
                                 if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
                                   showAlertWithTwoButtons(context, 'Are you sure you want to download this document?',
                                       onPressed: () async {
@@ -356,11 +351,11 @@ class _StartJobViewState extends State<StartJobView> {
                                         .getExternalStoragePublicDirectory(
                                         ExtStorage.DIRECTORY_DOWNLOADS);
                                     String fullPath = "$path/${job.pdfFileName}";
-                                    print('full path $fullPath');
+                                    // print('full path $fullPath');
                                     downloadFile(job.pdfUrl, fullPath);
                                   });
                                 } else {
-                                  print('not found');
+                                  // print('not found');
                                 }
                               },
                             ),

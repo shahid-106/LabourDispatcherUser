@@ -137,12 +137,12 @@ class AddressModel {
 
   Map<String, dynamic> toJsonWithoutCoordinates() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['city'] = this.city;
     // data['latitude'] = this.latitude;
     // data['longitude'] = this.longitude;
-    data['state'] = this.state;
-    data['streetName'] = this.streetName;
     data['streetNo'] = this.streetNo;
+    data['streetName'] = this.streetName;
+    data['state'] = this.state;
+    data['city'] = this.city;
     data['tellePhone'] = this.tellePhone;
     data['zipCode'] = this.zipCode;
     return data;

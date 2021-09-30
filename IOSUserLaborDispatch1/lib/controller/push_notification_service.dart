@@ -83,7 +83,7 @@ class PushNotificationService {
         final prefs = await SharedPreferences.getInstance();
         var companyId = prefs.getString('companyId');
         if (message.data != null) {
-          print("on message ${message.data.toString()}");
+          // print("on message ${message.data.toString()}");
           if(message.data['companyId'] == companyId.toUpperCase()){
             displayNotification(message.data);
           }

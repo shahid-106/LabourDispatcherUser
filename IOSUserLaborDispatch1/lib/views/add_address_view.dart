@@ -46,14 +46,14 @@ class _AddAddressState extends State<AddAddress> {
     var location = new Location();
     try {
       location.getLocation().then((value) async {
-        print("location Latitude: ${value.latitude}");
-        print("location Longitude: ${value.longitude}");
+        // print("location Latitude: ${value.latitude}");
+        // print("location Longitude: ${value.longitude}");
         lat = value.latitude;
         long = value.longitude;
         final coordinates = new Coordinates(lat, long);
         var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
         var first = addresses.first;
-        print('${first.toMap().toString()}');
+        // print('${first.toMap().toString()}');
         streetNoController.text = first.featureName;
         streetNameController.text = first.addressLine;
         cityController.text = first.adminArea;

@@ -90,7 +90,7 @@ class _StopJobViewState extends State<StopJobView> {
 
     jobLogApi.getJobLogsCount(companyId, pin).then((value) {
       jobLogCount = value;
-      print(jobLogCount);
+      // print(jobLogCount);
       setState(() {});
     });
   }
