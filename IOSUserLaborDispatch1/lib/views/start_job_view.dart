@@ -9,6 +9,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:intl/intl.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
+import 'package:ios_user_labor_dispatch_1/configs/app_strings.dart';
 import 'package:ios_user_labor_dispatch_1/configs/general_methods.dart';
 import 'package:ios_user_labor_dispatch_1/controller/cloud_storage_service.dart';
 import 'package:ios_user_labor_dispatch_1/controller/jobLog_api.dart';
@@ -17,7 +18,8 @@ import 'package:ios_user_labor_dispatch_1/model/jobLog.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/no_record_found.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/showDialog.dart';
 import 'package:ios_user_labor_dispatch_1/views/pdf_view.dart';
-import 'package:location/location.dart';
+import 'package:location/location.dart' as loc;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../controller/send_notification_api.dart';
 import 'package:ios_user_labor_dispatch_1/model/job.dart';
@@ -88,14 +90,15 @@ class _StartJobViewState extends State<StartJobView> {
     if (job.adress != null) {
       List<String> data = [];
       job.adress.toJsonWithoutCoordinates().entries.forEach((e) => data.add(e.value.toString()));
-      data = data.sublist(2);
+      print(data.toString());
+      // data = data.sublist(2);
       return data.join(', ');
     }
     return 'Address';
   }
 
   getLocation() async {
-    var location = new Location();
+    var location = new loc.Location();
     try {
       location.getLocation().then((value) async {
         // print("location Latitude: ${value.latitude}");
@@ -152,17 +155,25 @@ class _StartJobViewState extends State<StartJobView> {
               return status < 500;
             }),
       );
-      File file = File(savePath);
-      var raf = file.openSync(mode: FileMode.write);
-      // response.data is List<int> type
+      Map<Permission, PermissionStatus> statuses = await [Permission.storage].request();
+      if(statuses[Permission.storage].isGranted){
+        File file = File(savePath);
+        var raf = file.openSync(mode: FileMode.write);
+        // response.data is List<int> type
+        setState(() {
+          visibleDocumentButton = true;
+        });
+        raf.writeFromSync(response.data);
+        ToastUtil.showToast(context, 'File Downloaded Successfully');
+        await raf.close();
+      }
+    } catch (e) {
+      print(e);
+      ToastUtil.showToast(context, 'Error');
       setState(() {
         visibleDocumentButton = true;
       });
-      raf.writeFromSync(response.data);
-      ToastUtil.showToast(context, 'File Downloaded Successfully');
-      await raf.close();
-    } catch (e) {
-      print(e);
+
     }
   }
 
@@ -256,11 +267,11 @@ class _StartJobViewState extends State<StartJobView> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.startTime ?? 'Start Time'}'),
+                  Text('${job.startTime == null || job.startTime.isEmpty ? 'Last Start Time' : job.startTime}'),
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.stopTime ?? 'Stop Time'}'),
+                  Text('${job.stopTime == null || job.stopTime.isEmpty ? 'Last Stop Time' : job.stopTime}'),
                   SizedBox(
                     height: 10,
                   ),
@@ -347,6 +358,7 @@ class _StartJobViewState extends State<StartJobView> {
                                 if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
                                   showAlertWithTwoButtons(context, 'Are you sure you want to download this document?',
                                       onPressed: () async {
+                                        Navigator.pop(context);
                                     String path = await ExtStorage
                                         .getExternalStoragePublicDirectory(
                                         ExtStorage.DIRECTORY_DOWNLOADS);
