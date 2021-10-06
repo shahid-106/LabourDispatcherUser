@@ -3,8 +3,9 @@ import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfView extends StatefulWidget {
-  var url;
-  PdfView({this.url});
+  var path;
+  bool isNetwork;
+  PdfView({this.path, this.isNetwork = true});
 
   _PdfViewState createState() => new _PdfViewState();
 }
@@ -24,7 +25,7 @@ class _PdfViewState extends State<PdfView> {
           iconTheme: IconThemeData(color: AppColors.APP_WHITE_COLOR),
         ),
         body: Container(
-            child: SfPdfViewer.network(widget.url)
+            child: widget.isNetwork ? SfPdfViewer.network(widget.path) : SfPdfViewer.file(widget.path)
         )
     );
   }

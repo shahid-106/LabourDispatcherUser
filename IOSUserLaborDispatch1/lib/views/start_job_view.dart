@@ -163,9 +163,17 @@ class _StartJobViewState extends State<StartJobView> {
         setState(() {
           visibleDocumentButton = true;
         });
+        print(file.path);
+        print(file.absolute.path);
         raf.writeFromSync(response.data);
-        ToastUtil.showToast(context, 'File Downloaded Successfully');
+        ToastUtil.showToast(context, 'File Saved at $savePath');
         await raf.close();
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PdfView(path: file, isNetwork: false,)
+            )
+        );
       }
     } catch (e) {
       print(e);
@@ -383,7 +391,7 @@ class _StartJobViewState extends State<StartJobView> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => PdfView(
-                                                url: job.pdfUrl,
+                                                path: job.pdfUrl,
                                               )
                                       )
                                   );
