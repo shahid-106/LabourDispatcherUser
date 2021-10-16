@@ -50,7 +50,8 @@ class JobApi {
         //Job Date <= 30 Days
         var monthAgoDate = DateTime.now().subtract(Duration(days: 31));
         userJobs.removeWhere((element) => DateTime.parse(element.jobDate).isBefore(monthAgoDate));
-        userJobs = userJobs.reversed.toList();
+        userJobs.sort((a, b) => DateTime.parse(b.jobDate).compareTo(DateTime.parse(a.jobDate)));
+        // userJobs = userJobs.reversed.toList();
         // print(userJobs.length);
       } else {
         print('getNotStartedJobs() no jobs found');
@@ -75,6 +76,8 @@ class JobApi {
         });
         userJobs = userJobs.where((element) => element.jobPin == pin).toList();
         userJobs = userJobs.where((element) => element.jobFlag == 'STARTED').toList();
+        userJobs.sort((a, b) => DateTime.parse(b.startTime).compareTo(DateTime.parse(a.startTime)));
+        print(userJobs.length);
         // userJobs = userJobs.reversed.toList();
       } else {
         print('getStartedJobs() no jobs found');
