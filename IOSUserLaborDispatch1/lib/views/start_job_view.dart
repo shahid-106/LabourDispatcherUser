@@ -299,9 +299,6 @@ class _StartJobViewState extends State<StartJobView> {
                   SizedBox(
                     height: 10,
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -309,6 +306,7 @@ class _StartJobViewState extends State<StartJobView> {
                         btnText: 'Display on Map'.toUpperCase(),
                         btnColor: AppColors.APP_ORANGE_COLOR,
                         btnTextSize: 9,
+                        height: 40,
                         width: screenSize.width * 0.38,
                         btnTextColor: AppColors.APP_WHITE_COLOR,
                         onPressed: () {
@@ -322,6 +320,7 @@ class _StartJobViewState extends State<StartJobView> {
                         btnText: 'Call Customer'.toUpperCase(),
                         btnColor: AppColors.APP_ORANGE_COLOR,
                         btnTextSize: 9,
+                        height: 40,
                         width: screenSize.width * 0.38,
                         btnTextColor: AppColors.APP_WHITE_COLOR,
                         onPressed: () {
@@ -361,6 +360,7 @@ class _StartJobViewState extends State<StartJobView> {
                               btnTextColor: AppColors.APP_WHITE_COLOR,
                               width: screenSize.width * 0.38,
                               btnTextSize: 9,
+                              height: 40,
                               onPressed: () {
                                 // print(job.pdfUrl);
                                 if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
@@ -385,6 +385,7 @@ class _StartJobViewState extends State<StartJobView> {
                               btnColor: AppColors.APP_ORANGE_COLOR,
                               btnTextColor: AppColors.APP_WHITE_COLOR,
                               width: screenSize.width * 0.38,
+                              height: 40,
                               onPressed: () {
                                 if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
                                   Navigator.push(
@@ -402,7 +403,7 @@ class _StartJobViewState extends State<StartJobView> {
                         ) : Container()
                       : Loader(),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   visibleButton
                       ? buttonWidget(
@@ -410,6 +411,7 @@ class _StartJobViewState extends State<StartJobView> {
                           btnTextSize: 16,
                           btnColor: AppColors.APP_LIGHT_GREEN_COLOR,
                           btnTextColor: AppColors.APP_WHITE_COLOR,
+                    height: 40,
                           onPressed: () {
                             if (jobs.length > 0) {
                               startJob();
