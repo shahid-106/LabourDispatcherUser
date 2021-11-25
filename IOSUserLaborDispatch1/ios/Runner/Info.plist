@@ -65,6 +65,8 @@
 	<key>kTCCServiceMediaLibrary</key>
 	<string>media</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>photos</string>
+    <string>$(PRODUCT_NAME)photos description.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>$(PRODUCT_NAME) photos add description.</string>
 </dict>
 </plist>
