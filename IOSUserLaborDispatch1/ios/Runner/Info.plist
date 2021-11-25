@@ -61,12 +61,14 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Can I have location always?</string>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Music!</string>
+	<string>$(PRODUCT_NAME)  requires access to your phone’s music!</string>
 	<key>kTCCServiceMediaLibrary</key>
-	<string>media</string>
+	<string>$(PRODUCT_NAME)  requires access to your phone’s media</string>
 	<key>NSPhotoLibraryUsageDescription</key>
     <string>$(PRODUCT_NAME)photos description.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>$(PRODUCT_NAME) photos add description.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>$(PRODUCT_NAME)  requires access to your phone’s camera.</string>
 </dict>
 </plist>

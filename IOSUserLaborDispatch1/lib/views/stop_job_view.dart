@@ -282,10 +282,10 @@ class _StopJobViewState extends State<StopJobView> {
                                 btnColor: AppColors.APP_ORANGE_COLOR,
                                 btnTextSize: 10,
                                 btnTextColor: AppColors.APP_WHITE_COLOR,
-                                onPressed: () {
-                                  if (jobs.length > 0) {
-                                    selectCamera();
-                                  }
+                                onPressed: () async {
+                                  // if (jobs.length > 0) {
+                                    await selectCamera();
+                                  // }
                                 }),
                             buttonWidget(
                               btnText: 'Display Image'.toUpperCase(),
