@@ -56,9 +56,9 @@ class DecorationBoxes {
     );
   }
 
-  static BoxDecoration decorationWithRadiusAll(Color color, {double radius}) {
+  static BoxDecoration decorationWithRadiusAll({double radius}) {
     return BoxDecoration(
-      color: color,
+      border: Border.all(width: 1.00, color: AppColors.APP_PRIMARY_COLOR),
       borderRadius: BorderRadius.all(Radius.circular(radius ?? 10.0)),
     );
   }

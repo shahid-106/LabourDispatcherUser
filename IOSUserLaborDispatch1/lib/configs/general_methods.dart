@@ -76,7 +76,7 @@ String getDate(DateTime date) {
 }
 
 String getDateFormattedAsYYYYMMMD(DateTime date) {
-  return DateFormat('yyyy MMM d').format(date).toString();
+  return DateFormat('yyyy-MMM-d').format(date).toString();
 }
 
 String getDateFormattedAsDDMMYYYY(DateTime date) {

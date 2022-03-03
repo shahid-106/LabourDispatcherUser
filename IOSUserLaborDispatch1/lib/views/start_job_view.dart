@@ -311,8 +311,9 @@ class _StartJobViewState extends State<StartJobView> {
                         btnTextColor: AppColors.APP_WHITE_COLOR,
                         onPressed: () {
                           if (jobs.length > 0) {
-                            openMap(double.parse(job.adress.latitude),
-                                double.parse(job.adress.longitude));
+                            // openMap(double.parse(job.adress.latitude),
+                            //     double.parse(job.adress.longitude));
+                            openMap(lat, long);
                           }
                         },
                       ),

@@ -111,8 +111,8 @@ class _AddAddressState extends State<AddAddress> {
       controller: zipController,
       keyboardType: TextInputType.text,
       inputFormatters: [
-        WhitelistingTextInputFormatter(RegExp("[0-9]")),
-        BlacklistingTextInputFormatter(RegExp("[abFeG]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+        FilteringTextInputFormatter.deny(RegExp("[abFeG]"))
       ],
       autofocus: false,
       validator: requiredValidation,
@@ -125,8 +125,8 @@ class _AddAddressState extends State<AddAddress> {
       controller: telNoController,
       keyboardType: TextInputType.phone,
       inputFormatters: [
-        WhitelistingTextInputFormatter(RegExp("[0-9]")),
-        BlacklistingTextInputFormatter(RegExp("[abFeG]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+        FilteringTextInputFormatter.deny(RegExp("[abFeG]"))
       ],
       autofocus: false,
       validator: requiredValidation,

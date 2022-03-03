@@ -171,8 +171,8 @@ class _StopJobViewState extends State<StopJobView> {
       controller: priceQuoteController,
       keyboardType: TextInputType.number,
       inputFormatters: [
-        WhitelistingTextInputFormatter(RegExp("[0-9]")),
-        BlacklistingTextInputFormatter(RegExp("[abFeG]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+        FilteringTextInputFormatter.deny(RegExp("[abFeG]"))
       ],
       autofocus: false,
       validator: requiredValidation,
@@ -184,8 +184,8 @@ class _StopJobViewState extends State<StopJobView> {
       controller: quantityController,
       keyboardType: TextInputType.number,
       inputFormatters: [
-        WhitelistingTextInputFormatter(RegExp("[0-9]")),
-        BlacklistingTextInputFormatter(RegExp("[abFeG]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+        FilteringTextInputFormatter.deny(RegExp("[abFeG]"))
       ],
       autofocus: false,
       validator: requiredValidation,

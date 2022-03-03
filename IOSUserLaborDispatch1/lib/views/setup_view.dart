@@ -49,8 +49,8 @@ class _SetupState extends State<Setup> {
       keyboardType: TextInputType.number,
       autofocus: false,
       inputFormatters: [
-        WhitelistingTextInputFormatter(RegExp("[0-9]")),
-        BlacklistingTextInputFormatter(RegExp("[abFeG]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+        FilteringTextInputFormatter.deny(RegExp("[abFeG]"))
       ],
       validator: requiredValidation,
       style: TextStyle(color: AppColors.APP_BLACK_COLOR, fontSize: 14),

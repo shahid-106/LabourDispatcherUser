@@ -112,6 +112,14 @@ class JobApi {
     });
   }
 
+  Future<bool> deleteJob(Job job) {
+    return dbRef.child(job.jobNumber).remove().then((value){
+      return true;
+    }).catchError((error){
+      return false;
+    });
+  }
+
   Future<dynamic> getLocation(String address) async {
     String apiKey = '4341cc85aa46d4d614dd863368a0b0e6';
     var response = await http.get(Uri.parse('http://api.positionstack.com/v1/forward?access_key=$apiKey&query=$address'));
