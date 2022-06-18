@@ -48,7 +48,7 @@ class Job {
     jobDate = json['jobDate'].toString();
     jobHours = json['job_hours'].toString();
     startingTeg = json['starting_teg'].toString();
-    adress = json['adress'] != null ? new AddressModel.fromJson(jsonDecode(json['adress'])) : null;
+    adress = json['adress'] != null && json['adress'] != '' ? new AddressModel.fromJson(jsonDecode(json['adress'])) : AddressModel();
     jobDesc = json['jobDesc'].toString();
     jobFlag = json['jobFlag'].toString();
     startLongitude = json['start_longitude'].toString();

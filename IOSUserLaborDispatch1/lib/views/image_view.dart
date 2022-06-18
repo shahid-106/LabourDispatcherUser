@@ -5,14 +5,17 @@ import 'package:ios_user_labor_dispatch_1/shared_widgets/buttons.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/decoration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Images extends StatefulWidget {
-  _ImagesState createState() => new _ImagesState();
+import '../shared_widgets/no_record_found.dart';
+
+class ImageView extends StatefulWidget {
+  _ImageViewState createState() => new _ImageViewState();
 }
 
-class _ImagesState extends State<Images> {
+class _ImageViewState extends State<ImageView> {
 
   final prefs = SharedPreferences.getInstance();
   var companyId;
+  var menus = List<Map<String, dynamic>>();
 
   @override
   void initState() {
@@ -26,8 +29,9 @@ class _ImagesState extends State<Images> {
   Widget build(BuildContext context) {
 
     Widget screenUI() {
-      return Container(
-        padding: EdgeInsets.all(20),
+      return Center(
+        // padding: EdgeInsets.all(20),
+        child: NoRecordFound(msg: 'No File Found',),
       );
     }
 

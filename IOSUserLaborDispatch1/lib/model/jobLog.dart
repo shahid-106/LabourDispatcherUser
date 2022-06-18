@@ -47,28 +47,29 @@ class JobLog {
         this.uid});
 
   JobLog.fromJson(Map<String, dynamic> json) {
-    companyId = json['companyId'];
-    imageFileName = json['imageFileName'];
-    imageUrl = json['imageUrl'];
-    jobDesc = json['jobDesc'];
-    jobFlag = json['jobFlag'];
-    jobNumber = json['jobNumber'];
-    jobPin = json['jobPin'];
-    jobRate = json['jobRate'];
-    jobHours = json['job_hours'];
-    pdfFileName = json['pdfFileName'];
-    pdfUrl = json['pdfUrl'];
-    priceQuote = json['priceQuote'];
-    quantity = json['quantity'];
-    startLatitude = json['start_latitude'];
-    startLongitude = json['start_longitude'];
-    startTime = json['start_time'];
-    startingTeg = json['starting_teg'];
-    stopLatitude = json['stop_latitude'];
-    stopLongitude = json['stop_longitude'];
-    stopTime = json['stop_time'];
-    stopingTeg = json['stoping_teg'];
-    uid = json['uid'];
+    // print(json['uid']);
+    companyId = json['companyId'] == null ? "" : json['companyId'].toString();
+    imageFileName = json['imageFileName'] == null ? "" : json['imageFileName'].toString();
+    imageUrl = json['imageUrl'] == null ? "" : json['imageUrl'].toString();
+    jobDesc = json['jobDesc'] == null ? "" : json['jobDesc'].toString();
+    jobFlag = json['jobFlag'] == null ? "" : json['jobFlag'].toString();
+    jobNumber = json['jobNumber'] == null ? "" : json['jobNumber'].toString();
+    jobPin = json['jobPin'] == null ? "" : json['jobPin'].toString();
+    jobRate = json['jobRate'] == null ? "" : json['jobRate'].toString();
+    jobHours = json['job_hours'] == null ? "" : json['job_hours'].toString();
+    pdfFileName = json['pdfFileName'] == null ? "" : json['pdfFileName'].toString();
+    pdfUrl = json['pdfUrl'] == null ? "" : json['pdfUrl'].toString();
+    priceQuote = json['priceQuote'] == null ? "" : json['priceQuote'].toString();
+    quantity = json['quantity'] == null ? "" : json['quantity'].toString();
+    startLatitude = json['start_latitude'] == null ? "" : json['start_latitude'].toString();
+    startLongitude = json['start_longitude'] == null ? "" : json['start_longitude'].toString();
+    startTime = json['start_time'] == null ? "" : json['start_time'].toString();
+    startingTeg = json['starting_teg'] == null ? "" : json['starting_teg'].toString();
+    stopLatitude = json['stop_latitude'] == null ? "" : json['stop_latitude'].toString();
+    stopLongitude = json['stop_longitude'] == null ? "" : json['stop_longitude'].toString();
+    stopTime = json['stop_time'] == null ? "" : json['stop_time'].toString();
+    stopingTeg = json['stoping_teg'] == null ? "" : json['stoping_teg'].toString();
+    uid = json['uid'] == null ? "" : json['uid'].toString();
   }
 
   Map<String, dynamic> toJson() {

@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
@@ -13,7 +12,6 @@ import 'package:ios_user_labor_dispatch_1/shared_widgets/decoration.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/loader.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/showDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'jobs_list.dart';
 
 class Edit extends StatefulWidget {
@@ -35,6 +33,9 @@ class _EditState extends State<Edit> {
   // JobLogApi jobLogApi = new JobLogApi();
   // var jobLogCount = 0;
 
+  TextEditingController jobDateController = new TextEditingController();
+  TextEditingController jobStartTimeController = new TextEditingController();
+  TextEditingController jobStopTimeController = new TextEditingController();
   TextEditingController descriptionController = new TextEditingController();
   TextEditingController pinController = new TextEditingController();
   TextEditingController companyIdController = new TextEditingController();
@@ -54,7 +55,7 @@ class _EditState extends State<Edit> {
   }
 
   getJobs() {
-    api.getAllJobs(companyId, pin).then((value) {
+    api.getAllJobsForEdit(companyId, pin).then((value) {
       jobs = value;
       if (jobs.length > 0) {
         job = jobs[0];
@@ -64,7 +65,10 @@ class _EditState extends State<Edit> {
         descriptionController.text = job.jobDesc ?? '';
         jobRateController.text = job.jobRate ?? '';
         quantityController.text = job.quantity ?? '';
-        jobHoursController.text = job.jobHours ?? '';
+        jobHoursController.text = job.jobHours == "null" ? '': job.jobHours;
+        jobDateController.text = job.jobDate != "null" || job.jobDate != null ? job.jobDate.split(' ')[0] : '';
+        jobStartTimeController.text = job.startTime ?? '';
+        jobStopTimeController.text = job.stopTime ?? '';
       } else {
         job = new Job();
       }
@@ -110,7 +114,10 @@ class _EditState extends State<Edit> {
               descriptionController.text = job.jobDesc ?? '';
               jobRateController.text = job.jobRate ?? '';
               quantityController.text = job.quantity ?? '';
-              jobHoursController.text = job.jobHours ?? '';
+              jobHoursController.text = job.jobHours == "null" ? '': job.jobHours;
+              jobDateController.text = job.jobDate != "null" || job.jobDate != null ? job.jobDate.split(' ')[0] : '';
+              jobStartTimeController.text = job.startTime ?? '';
+              jobStopTimeController.text = job.stopTime ?? '';
             });
           },
         )));
@@ -129,11 +136,25 @@ class _EditState extends State<Edit> {
                   Text(
                     'Click below to select a different Job:',
                     style: TextStyle(
-                      color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                   SizedBox(height: 10),
                   jobsDropdown,
+                  SizedBox(height: 10),
+                  TextFormField(
+                    controller: jobDateController,
+                    keyboardType: TextInputType.text,
+                    autofocus: false,
+                    enabled: false,
+                    validator: requiredValidation,
+                    style: TextStyle(
+                        color: AppColors.APP_BLACK_COLOR, fontSize: 14),
+                    decoration: DecorationInputs.textBoxInputDecoration(
+                        label: 'Job Date'),
+                  ),
                   SizedBox(height: 10),
                   TextFormField(
                     controller: descriptionController,
@@ -238,6 +259,34 @@ class _EditState extends State<Edit> {
                         color: AppColors.APP_BLACK_COLOR, fontSize: 14),
                     decoration: DecorationInputs.textBoxInputDecoration(
                         label: 'Quantity'),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: jobStartTimeController,
+                    keyboardType: TextInputType.text,
+                    autofocus: false,
+                    enabled: false,
+                    validator: requiredValidation,
+                    style: TextStyle(
+                        color: AppColors.APP_BLACK_COLOR, fontSize: 14),
+                    decoration: DecorationInputs.textBoxInputDecoration(
+                        label: 'Start Time'),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: jobStopTimeController,
+                    keyboardType: TextInputType.text,
+                    autofocus: false,
+                    enabled: false,
+                    validator: requiredValidation,
+                    style: TextStyle(
+                        color: AppColors.APP_BLACK_COLOR, fontSize: 14),
+                    decoration: DecorationInputs.textBoxInputDecoration(
+                        label: 'Stop Time'),
                   ),
                   SizedBox(
                     height: 5,

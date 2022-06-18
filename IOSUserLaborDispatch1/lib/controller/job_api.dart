@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:ios_user_labor_dispatch_1/model/job.dart';
@@ -8,17 +7,39 @@ import 'package:ios_user_labor_dispatch_1/model/job.dart';
 class JobApi {
   final dbRef = FirebaseDatabase.instance.reference().child('JOBS');
 
-  Future<List<Job>> getAllJobs(String companyId, String pin) async {
+  Future<List<Job>> getAllJobsForEdit(String companyId, String pin) async {
 
     List<Job> userJobs = [];
     await dbRef
-        .orderByChild('jobDate').once()
+        .orderByChild('companyId').equalTo(companyId).once()
         .then((result) async {
       if (result.value != null) {
         result.value.forEach((key, childSnapshot) {
           userJobs.add(Job.fromJson(Map.from(childSnapshot)));
         });
-        userJobs = userJobs.where((element) => element.companyId == companyId.toUpperCase()).toList();
+        // userJobs = userJobs.where((element) => element.companyId == companyId.toUpperCase()).toList();
+        userJobs = userJobs.where((element) => element.jobPin == pin).toList();
+        userJobs.sort((a, b) => DateTime.parse(b.startTime).compareTo(DateTime.parse(a.startTime)));
+      } else {
+        print('getAllJobs() no jobs found');
+      }
+    }).catchError((e) {
+      print('getAllJobs() error: $e');
+    });
+    return userJobs;
+  }
+
+  Future<List<Job>> getAllJobs(String companyId, String pin) async {
+
+    List<Job> userJobs = [];
+    await dbRef
+        .orderByChild('companyId').equalTo(companyId).once()
+        .then((result) async {
+      if (result.value != null) {
+        result.value.forEach((key, childSnapshot) {
+          userJobs.add(Job.fromJson(Map.from(childSnapshot)));
+        });
+        // userJobs = userJobs.where((element) => element.companyId == companyId.toUpperCase()).toList();
         userJobs = userJobs.where((element) => element.jobPin == pin).toList();
         var twoMonthAgoDate = DateTime.now().subtract(Duration(days: 61));
         //Job Date” <= Current Date() - 61 Days.
@@ -48,8 +69,32 @@ class JobApi {
         userJobs = userJobs.where((element) => element.jobFlag != 'STARTED').toList();
         // print(userJobs.length);
         //Job Date <= 30 Days
-        var monthAgoDate = DateTime.now().subtract(Duration(days: 31));
-        userJobs.removeWhere((element) => DateTime.parse(element.jobDate).isBefore(monthAgoDate));
+        // var monthAgoDate = DateTime.now().subtract(Duration(days: 31));
+        // userJobs.removeWhere((element) => DateTime.parse(element.jobDate).isBefore(monthAgoDate));
+        userJobs.sort((a, b) => DateTime.parse(b.jobDate).compareTo(DateTime.parse(a.jobDate)));
+        // userJobs = userJobs.reversed.toList();
+        // print(userJobs.length);
+      } else {
+        print('getNotStartedJobs() no jobs found');
+      }
+    }).catchError((e) {
+      print('getNotStartedJobs() error: $e');
+    });
+    return userJobs;
+  }
+
+  Future<List<Job>> getAllJobsForReport(String companyId, String pin) async {
+
+    List<Job> userJobs = [];
+    await dbRef
+        .orderByChild('companyId').equalTo(companyId).once()
+        .then((result) async {
+      if (result.value != null) {
+        result.value.forEach((key, childSnapshot) {
+          userJobs.add(Job.fromJson(Map.from(childSnapshot)));
+        });
+        // print(userJobs.length);
+        userJobs = userJobs.where((element) => element.jobPin == pin).toList();
         userJobs.sort((a, b) => DateTime.parse(b.jobDate).compareTo(DateTime.parse(a.jobDate)));
         // userJobs = userJobs.reversed.toList();
         // print(userJobs.length);
@@ -74,10 +119,13 @@ class JobApi {
         result.value.forEach((key, childSnapshot) {
           userJobs.add(Job.fromJson(Map.from(childSnapshot)));
         });
+        // print(userJobs.length);
         userJobs = userJobs.where((element) => element.jobPin == pin).toList();
+        // print(userJobs.length);
         userJobs = userJobs.where((element) => element.jobFlag == 'STARTED').toList();
+        // print(userJobs.length);
         userJobs.sort((a, b) => DateTime.parse(b.startTime).compareTo(DateTime.parse(a.startTime)));
-        print(userJobs.length);
+        // print(userJobs.length);
         // userJobs = userJobs.reversed.toList();
       } else {
         print('getStartedJobs() no jobs found');

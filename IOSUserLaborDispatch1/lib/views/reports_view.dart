@@ -7,6 +7,7 @@ import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
 import 'package:ios_user_labor_dispatch_1/configs/general_methods.dart';
 import 'package:ios_user_labor_dispatch_1/controller/jobLog_api.dart';
 import 'package:ios_user_labor_dispatch_1/controller/job_api.dart';
+import 'package:ios_user_labor_dispatch_1/controller/pdf_api.dart';
 import 'package:ios_user_labor_dispatch_1/model/job.dart';
 import 'package:ios_user_labor_dispatch_1/model/jobLog.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/buttons.dart';
@@ -53,11 +54,10 @@ class _ReportsState extends State<Reports> {
   }
 
   getJobs() {
-    api.getAllJobs(companyId, pin).then((value) {
+    api.getAllJobsForReport(companyId, pin).then((value) {
       jobs = value;
       if (jobs.length > 0) {
         job = jobs[0];
-        getJobLog();
       }
       else{
         job = new Job();
@@ -66,25 +66,26 @@ class _ReportsState extends State<Reports> {
       setState(() {});
     });
 
-    jobLogApi.getJobLogs(companyId).then((value) {
+    jobLogApi.getJobLogs(companyId, pin).then((value) {
       jobLogs = value;
+      getJobLog();
       isLoading = false;
       setState(() { });
     });
   }
 
   getJobLog() {
-    jobLogApi.getJobLog(job.jobNumber).then((value) {
-      jobLog = value;
-      setState(() {});
-    });
+    print(job.jobNumber);
+    jobLog = jobLogs.firstWhere((element) => element.jobNumber == job.jobNumber, orElse: () => null);
+    print(jobLog);
+    setState(() {});
   }
 
   String getAddress(Job job) {
     if (job.adress != null) {
       List<String> data = [];
       job.adress.toJsonWithoutCoordinates().entries.forEach((e) => data.add(e.value.toString()));
-      print(data.toString());
+      // print(data.toString());
       // data = data.sublist(2);
       return data.join(', ');
     }
@@ -169,6 +170,7 @@ class _ReportsState extends State<Reports> {
               onChanged: (value) async {
                 setState(() {
                   job = value;
+                  getJobLog();
                 });
               },
             )));
@@ -181,45 +183,51 @@ class _ReportsState extends State<Reports> {
         // data = data.sublist(2);
         address = data.join(', ');
       }
-      var jobLog = jobLogs.firstWhere((element) => element.jobNumber == job.jobNumber, orElse: () => null);
-      print(jobLog);
+      // var jobLog = jobLogs.firstWhere((element) => element.jobNumber == job.jobNumber, orElse: () => null);
+      // print(jobLog);
       showDialog(
           context: context,
           builder: (_) => Dialog(
             child: Container(
               width: screenSize.width * 0.8,
-              height: screenSize.height * 0.5,
+              height: screenSize.height * 0.65,
               padding: EdgeInsets.all(15),
               child: ListView(
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Text('UID: '+jobLog.uid??'', style: TextStyle(fontSize: 14),),
+                  SizedBox(height: 5,),
                   Text('Job Number: '+job.jobNumber, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
                   Text('Job Description: '+job.jobDesc, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
-                  Text('Job Date: '+job.jobDate, style: TextStyle(fontSize: 14),),
+                  Text('PIN: '+job.jobPin, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
-                  Text('Job Hours: '+job.jobHours, style: TextStyle(fontSize: 14),),
-                  SizedBox(height: 5,),
-                  Text('Job Quantity: '+job.quantity, style: TextStyle(fontSize: 14),),
+                  Text('Company ID: '+job.companyId, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
                   Text('Job Flag: '+job.jobFlag, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
+                  Text('Job Hours: '+job.jobHours, style: TextStyle(fontSize: 14),),
+                  SizedBox(height: 5,),
                   Text('Job Rate: '+job.jobRate, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
-                  Text('Job Price Quote: '+job.priceQuote, style: TextStyle(fontSize: 14),),
-                  SizedBox(height: 5,),
-                  Text('Job Pin: '+job.jobPin, style: TextStyle(fontSize: 14),),
+                  Text('Job Cost: '+job.priceQuote, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
                   Text('Start Time: '+job.startTime, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
                   Text('Stop Time: '+job.stopTime, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
-                  Text('Start Latitude: '+job.startLatitude, style: TextStyle(fontSize: 14),),
+                  Text('Start Latitude: '+(jobLog.startLatitude == "null" ? '' : jobLog.startLatitude), style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
-                  Text('Start Longitude: '+job.startLongitude, style: TextStyle(fontSize: 14),),
+                  Text('Start Longitude: '+(jobLog.startLongitude == "null" ? '' : jobLog.startLongitude), style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
+                  Text('Stop Latitude: '+(jobLog.stopLatitude == "null" ? '' : jobLog.stopLatitude), style: TextStyle(fontSize: 14),),
+                  SizedBox(height: 5,),
+                  Text('Stop Longitude: '+(jobLog.stopLongitude == "null" ? '' : jobLog.stopLongitude), style: TextStyle(fontSize: 14),),
+                  SizedBox(height: 5,),
+                  Text('Job Date: '+job.jobDate, style: TextStyle(fontSize: 14),),
+                  SizedBox(height: 5,),
+                  // Text('Job Quantity: '+job.quantity, style: TextStyle(fontSize: 14),),
+                  // SizedBox(height: 5,),
                   Text('PDF Filename: '+job.pdfFileName, style: TextStyle(fontSize: 14),),
                   SizedBox(height: 5,),
                   (jobLog == null || jobLog == '') ? Text('Image Filename: ', style: TextStyle(fontSize: 14),)
@@ -247,7 +255,9 @@ class _ReportsState extends State<Reports> {
                   Text(
                     'Click below to select a different Job:',
                     style: TextStyle(
-                      color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                   SizedBox(height: 10),
@@ -275,8 +285,8 @@ class _ReportsState extends State<Reports> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(width: screenSize.width / 2.2, child: Text('${job.priceQuote == null ? 'Price Quote' : 'Price Quote: '+job.priceQuote}')),
-                      Container(child: Text('${job.quantity == null ? 'Quantity ' : ', Quantity: '+job.quantity}')),
+                      Container(width: screenSize.width / 2.2, child: Text('${job.priceQuote == null ? 'Price Quote' : 'Price Quote: '+job.priceQuote}, ')),
+                      Container(child: Text('${job.quantity == null ? 'Quantity ' : 'Quantity: '+job.quantity}')),
                     ],
                   ),
                   SizedBox(
@@ -286,18 +296,18 @@ class _ReportsState extends State<Reports> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(width: screenSize.width / 2.2, child: Text('${job.jobRate == null ? 'Rate' : 'Rate: '+job.jobRate}')),
-                      Container(child: Text('${job.priceQuote == null ? 'Cost ' : ', Cost: '+job.priceQuote}')),
+                      Container(width: screenSize.width / 2.2, child: Text('${job.jobRate == null ? 'Rate' : 'Rate: '+job.jobRate}, ')),
+                      Container(child: Text('${job.priceQuote == null ? 'Cost ' : 'Cost: '+job.priceQuote}')),
                     ],
                   ),
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.startTime == null || job.startTime.isEmpty ? 'Last Start Time' : job.startTime}'),
+                  Text('${job.startTime == "null" || job.startTime == null ? 'Last Start Time' : job.startTime}'),
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.stopTime == null || job.stopTime.isEmpty ? 'Last Stop Time' : job.stopTime}'),
+                  Text('${job.stopTime == "null" || job.stopTime == null ? 'Last Stop Time' : job.stopTime}'),
                   SizedBox(
                     height: 10,
                   ),
@@ -334,7 +344,7 @@ class _ReportsState extends State<Reports> {
                   btnTextColor: AppColors.APP_WHITE_COLOR,
                   height: 40,
                   onPressed: () {
-                    if (jobs.length > 0) {
+                    if (jobs.length > 0 && jobLog != null) {
                       showData(job);
                     }
                   },

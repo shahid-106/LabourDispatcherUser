@@ -1,85 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
+import 'package:ios_user_labor_dispatch_1/configs/general_methods.dart';
+import 'package:ios_user_labor_dispatch_1/shared_widgets/buttons.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/decoration.dart';
-import 'package:ios_user_labor_dispatch_1/views/start_job_view.dart';
-import 'package:ios_user_labor_dispatch_1/views/edit_view.dart';
-import 'package:ios_user_labor_dispatch_1/views/export_view.dart';
-import 'package:ios_user_labor_dispatch_1/views/docs_images_view.dart';
-import 'package:ios_user_labor_dispatch_1/views/gps_view.dart';
-import 'package:ios_user_labor_dispatch_1/views/reports_view.dart';
+import 'package:ios_user_labor_dispatch_1/views/docs_view.dart';
+import 'package:ios_user_labor_dispatch_1/views/image_view.dart';
 import 'package:ios_user_labor_dispatch_1/views/setup_view.dart';
-import 'package:ios_user_labor_dispatch_1/views/stop_job_view.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Dashboard extends StatefulWidget {
-  _DashboardState createState() => new _DashboardState();
+class DocsImagesView extends StatefulWidget {
+  _DocsImagesViewState createState() => new _DocsImagesViewState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DocsImagesViewState extends State<DocsImagesView> {
 
   final prefs = SharedPreferences.getInstance();
   var companyId;
-
   var menus = List<Map<String, dynamic>>();
 
   @override
   void initState() {
-
     getCompanyId();
     super.initState();
-  }
-
-  setMenus(){
-    menus.clear();
-    menus.add({
-      'name': 'Setup',
-      'color': AppColors.APP_GREEN_COLOR,
-      'icons': Icons.settings,
-      'route': Setup(),
-    });
-    menus.add({
-      'name': 'Start A Job',
-      'color': AppColors.APP_LIGHT_GREEN_COLOR,
-      'icons': Icons.play_arrow_sharp,
-      'route': companyId == null ? Setup(route: StartJobView(),) : StartJobView(),
-    });
-    menus.add({
-      'name': 'Stop A Job',
-      'color': AppColors.APP_RED_COLOR,
-      'icons': Icons.stop,
-      'route': companyId == null ? Setup() : StopJobView(),
-    });
-    menus.add({
-      'name': 'Reports',
-      'color': AppColors.APP_LIGHT_GREEN_COLOR,
-      'icons': Icons.dvr,
-      'route': companyId == null ? Setup() : Reports(),
-    });
-    menus.add({
-      'name': 'Edit',
-      'color': AppColors.APP_ORANGE_COLOR,
-      'icons': Icons.edit,
-      'route': companyId == null ? Setup() : Edit(),
-    });
-    menus.add({
-      'name': 'Export',
-      'color': AppColors.APP_ORANGE_COLOR,
-      'icons': Icons.publish,
-      'route': companyId == null ? Setup() : Export(),
-    });
-    menus.add({
-      'name': 'GPS',
-      'color': AppColors.APP_BLUE_COLOR,
-      'icons': Icons.location_pin,
-      'route': companyId == null ? Setup() : LocationView(),
-    });
-    menus.add({
-      'name': 'Images & Documents',
-      'color': AppColors.APP_BLUE_COLOR,
-      'icons': Icons.insert_drive_file_rounded,
-      'route': companyId == null ? Setup() : DocsImagesView(),
-    });
-    setState(() { });
   }
 
   getCompanyId(){
@@ -87,6 +29,23 @@ class _DashboardState extends State<Dashboard> {
       companyId = value.getString('companyId');
       setMenus();
     });
+  }
+
+  setMenus(){
+    menus.clear();
+    menus.add({
+      'name': 'Documents',
+      'color': AppColors.APP_BLUE_COLOR,
+      'icons': Icons.edit,
+      'route': companyId == null ? Setup() : DocumentsView(),
+    });
+    menus.add({
+      'name': 'Images',
+      'color': AppColors.APP_BLUE_COLOR,
+      'icons': Icons.image,
+      'route': companyId == null ? Setup() : ImageView(),
+    });
+    setState(() { });
   }
 
   @override
@@ -160,11 +119,11 @@ class _DashboardState extends State<Dashboard> {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: AppColors.APP_PRIMARY_COLOR,
         elevation: 0,
         titleSpacing: 10,
         title: Text('DispatchLabor: USER', style: TextStyle(color: AppColors.APP_WHITE_COLOR),),
+        iconTheme: IconThemeData(color: AppColors.APP_WHITE_COLOR),
       ),
       body: screenUI(),
     );

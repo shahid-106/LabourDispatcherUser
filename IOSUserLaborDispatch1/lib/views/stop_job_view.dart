@@ -5,8 +5,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
@@ -225,11 +223,17 @@ class _StopJobViewState extends State<StopJobView> {
                     'Click below to select a different Job:',
                     style: TextStyle(
                       color: AppColors.APP_LIGHT_GREEN_COLOR,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
                   SizedBox(height: 10),
                   jobsDropdown,
                   SizedBox(height: 10),
+                  Text('${job.jobDate != null ? job.jobDate.split(' ')[0] : 'Job Date'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text('${job.jobDesc ?? 'Job Description'}'),
                   SizedBox(height: 10),
                   Text('${job.jobPin ?? 'Job Pin'}'),
@@ -241,10 +245,6 @@ class _StopJobViewState extends State<StopJobView> {
                     height: 10,
                   ),
                   Text('${job.jobFlag ?? 'Job Flag'}'),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text('${job.jobDate ?? 'Job Date'}'),
                   SizedBox(
                     height: 10,
                   ),
@@ -412,13 +412,15 @@ class _StopJobViewState extends State<StopJobView> {
           quantity: job.quantity,
           companyId: companyId,
           jobFlag: job.jobFlag,
-          jobHours: '0',
+          jobHours: job.jobHours,
           pdfFileName: job.pdfFileName,
           pdfUrl: job.pdfUrl,
           imageFileName: '',
           imageUrl: '',
-          startLatitude: lat.toString(),
-          startLongitude: long.toString(),
+          startLatitude: job.startLatitude,
+          startLongitude: job.startLongitude,
+          stopLatitude: lat.toString(),
+          stopLongitude: long.toString(),
           startTime: result,
           startingTeg: '0',
           stopingTeg: '0');

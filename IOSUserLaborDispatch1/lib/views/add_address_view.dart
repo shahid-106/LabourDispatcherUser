@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:geocoder/geocoder.dart';
+import 'package:geocoder2/geocoder2.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/loader.dart';
 import 'package:location/location.dart';
 import 'package:file_picker/file_picker.dart';
@@ -50,15 +50,14 @@ class _AddAddressState extends State<AddAddress> {
         // print("location Longitude: ${value.longitude}");
         lat = value.latitude;
         long = value.longitude;
-        final coordinates = new Coordinates(lat, long);
-        var addresses = await Geocoder.local.findAddressesFromCoordinates(coordinates);
-        var first = addresses.first;
+        var address = await Geocoder2.getDataFromCoordinates(latitude: lat, longitude: long, googleMapApiKey: 'AIzaSyB7o4aFDhM57QgoL3ArtQrJEd5hs29PqKs');
+        // var first = addresses.first;
         // print('${first.toMap().toString()}');
-        streetNoController.text = first.featureName;
-        streetNameController.text = first.addressLine;
-        cityController.text = first.adminArea;
-        stateController.text = first.adminArea;
-        zipController.text = first.postalCode;
+        streetNoController.text = address.street_number;
+        streetNameController.text = address.address;
+        cityController.text = address.city;
+        stateController.text = address.state;
+        zipController.text = address.postalCode;
         setState(() { });
       });
     } on Exception {

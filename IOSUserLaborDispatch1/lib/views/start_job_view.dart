@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:ext_storage/ext_storage.dart';
+// import 'package:ext_storage/ext_storage.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:intl/intl.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_strings.dart';
@@ -19,6 +18,7 @@ import 'package:ios_user_labor_dispatch_1/shared_widgets/no_record_found.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/showDialog.dart';
 import 'package:ios_user_labor_dispatch_1/views/pdf_view.dart';
 import 'package:location/location.dart' as loc;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../controller/send_notification_api.dart';
@@ -77,8 +77,7 @@ class _StartJobViewState extends State<StartJobView> {
       if (jobs.length > 0) {
         job = jobs[0];
         getJobLog();
-      }
-      else{
+      } else {
         job = new Job();
       }
       isLoading = false;
@@ -89,8 +88,11 @@ class _StartJobViewState extends State<StartJobView> {
   String getAddress(Job job) {
     if (job.adress != null) {
       List<String> data = [];
-      job.adress.toJsonWithoutCoordinates().entries.forEach((e) => data.add(e.value.toString()));
-      print(data.toString());
+      job.adress
+          .toJsonWithoutCoordinates()
+          .entries
+          .forEach((e) => data.add(e.value.toString()));
+      // print(data.toString());
       // data = data.sublist(2);
       return data.join(', ');
     }
@@ -135,7 +137,8 @@ class _StartJobViewState extends State<StartJobView> {
   }
 
   static Future<void> openMap(double latitude, double longitude) async {
-    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    String googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     await launch(googleUrl);
   }
 
@@ -155,8 +158,9 @@ class _StartJobViewState extends State<StartJobView> {
               return status < 500;
             }),
       );
-      Map<Permission, PermissionStatus> statuses = await [Permission.storage].request();
-      if(statuses[Permission.storage].isGranted){
+      Map<Permission, PermissionStatus> statuses =
+          await [Permission.storage].request();
+      if (statuses[Permission.storage].isGranted) {
         File file = File(savePath);
         var raf = file.openSync(mode: FileMode.write);
         // response.data is List<int> type
@@ -171,9 +175,10 @@ class _StartJobViewState extends State<StartJobView> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PdfView(path: file, isNetwork: false,)
-            )
-        );
+                builder: (context) => PdfView(
+                      path: file,
+                      isNetwork: false,
+                    )));
       }
     } catch (e) {
       print(e);
@@ -181,7 +186,6 @@ class _StartJobViewState extends State<StartJobView> {
       setState(() {
         visibleDocumentButton = true;
       });
-
     }
   }
 
@@ -251,12 +255,17 @@ class _StartJobViewState extends State<StartJobView> {
                   Text(
                     'Click below to select a different Job:',
                     style: TextStyle(
-                      color: AppColors.APP_LIGHT_GREEN_COLOR,
-                    ),
+                        color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   jobsDropdown,
                   SizedBox(height: 10),
+                  Text('${job.jobDate != null ? job.jobDate.split(' ')[0] : 'Job Date'}'),
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text('${job.jobDesc ?? 'Job Description'}'),
                   SizedBox(height: 10),
                   Text('${job.jobPin ?? 'Job Pin'}'),
@@ -271,22 +280,22 @@ class _StartJobViewState extends State<StartJobView> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.jobDate ?? 'Job Date'}'),
+                  Text(
+                      '${job.startTime == null || job.startTime.isEmpty ? 'Last Start Time' : job.startTime}'),
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.startTime == null || job.startTime.isEmpty ? 'Last Start Time' : job.startTime}'),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text('${job.stopTime == null || job.stopTime.isEmpty ? 'Last Stop Time' : job.stopTime}'),
+                  Text(
+                      '${job.stopTime == null || job.stopTime.isEmpty ? 'Last Stop Time' : job.stopTime}'),
                   SizedBox(
                     height: 10,
                   ),
                   Row(
                     children: [
-                      Text('${job.priceQuote == null ? 'Price Quote' : 'Price Quote: '+job.priceQuote}'),
-                      Text('${job.quantity == null ? ', Quantity ' : ', Quantity: '+job.quantity}'),
+                      Text(
+                          '${job.priceQuote == null ? 'Price Quote' : 'Price Quote: ' + job.priceQuote}'),
+                      Text(
+                          '${job.quantity == null ? ', Quantity ' : ', Quantity: ' + job.quantity}'),
                     ],
                   ),
                   SizedBox(
@@ -311,9 +320,9 @@ class _StartJobViewState extends State<StartJobView> {
                         btnTextColor: AppColors.APP_WHITE_COLOR,
                         onPressed: () {
                           if (jobs.length > 0) {
-                            // openMap(double.parse(job.adress.latitude),
-                            //     double.parse(job.adress.longitude));
-                            openMap(lat, long);
+                            openMap(double.parse(job.adress.latitude),
+                                double.parse(job.adress.longitude));
+                            // openMap(lat, long);
                           }
                         },
                       ),
@@ -352,56 +361,57 @@ class _StartJobViewState extends State<StartJobView> {
                           height: 10,
                         ),
                   visibleDocumentButton
-                      ? job.pdfUrl != null && job.pdfUrl.isNotEmpty ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            buttonWidget(
-                              btnText: 'Download Documents'.toUpperCase(),
-                              btnColor: AppColors.APP_ORANGE_COLOR,
-                              btnTextColor: AppColors.APP_WHITE_COLOR,
-                              width: screenSize.width * 0.38,
-                              btnTextSize: 9,
-                              height: 40,
-                              onPressed: () {
-                                // print(job.pdfUrl);
-                                if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
-                                  showAlertWithTwoButtons(context, 'Are you sure you want to download this document?',
-                                      onPressed: () async {
+                      ? job.pdfUrl != null && job.pdfUrl.isNotEmpty
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                buttonWidget(
+                                  btnText: 'Download Documents'.toUpperCase(),
+                                  btnColor: AppColors.APP_ORANGE_COLOR,
+                                  btnTextColor: AppColors.APP_WHITE_COLOR,
+                                  width: screenSize.width * 0.38,
+                                  btnTextSize: 9,
+                                  height: 40,
+                                  onPressed: () {
+                                    // print(job.pdfUrl);
+                                    if (jobs.length > 0 &&
+                                        job.pdfUrl.isNotEmpty) {
+                                      showAlertWithTwoButtons(context,
+                                          'Are you sure you want to download this document?',
+                                          onPressed: () async {
                                         Navigator.pop(context);
-                                    String path = await ExtStorage
-                                        .getExternalStoragePublicDirectory(
-                                        ExtStorage.DIRECTORY_DOWNLOADS);
-                                    String fullPath = "$path/${job.pdfFileName}";
-                                    // print('full path $fullPath');
-                                    downloadFile(job.pdfUrl, fullPath);
-                                  });
-                                } else {
-                                  // print('not found');
-                                }
-                              },
-                            ),
-                            buttonWidget(
-                              btnText: 'Open Document'.toUpperCase(),
-                              btnTextSize: 9,
-                              btnColor: AppColors.APP_ORANGE_COLOR,
-                              btnTextColor: AppColors.APP_WHITE_COLOR,
-                              width: screenSize.width * 0.38,
-                              height: 40,
-                              onPressed: () {
-                                if (jobs.length > 0 && job.pdfUrl.isNotEmpty) {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => PdfView(
-                                                path: job.pdfUrl,
-                                              )
-                                      )
-                                  );
-                                }
-                              },
-                            ),
-                          ],
-                        ) : Container()
+                                        var path = await getExternalStorageDirectory();
+                                        String fullPath = "${path.path}/${job.pdfFileName}";
+                                        // print('full path $fullPath');
+                                        downloadFile(job.pdfUrl, fullPath);
+                                      });
+                                    } else {
+                                      // print('not found');
+                                    }
+                                  },
+                                ),
+                                buttonWidget(
+                                  btnText: 'Open Document'.toUpperCase(),
+                                  btnTextSize: 9,
+                                  btnColor: AppColors.APP_ORANGE_COLOR,
+                                  btnTextColor: AppColors.APP_WHITE_COLOR,
+                                  width: screenSize.width * 0.38,
+                                  height: 40,
+                                  onPressed: () {
+                                    if (jobs.length > 0 &&
+                                        job.pdfUrl.isNotEmpty) {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => PdfView(
+                                                    path: job.pdfUrl,
+                                                  )));
+                                    }
+                                  },
+                                ),
+                              ],
+                            )
+                          : Container()
                       : Loader(),
                   SizedBox(
                     height: 10,
@@ -412,7 +422,7 @@ class _StartJobViewState extends State<StartJobView> {
                           btnTextSize: 16,
                           btnColor: AppColors.APP_LIGHT_GREEN_COLOR,
                           btnTextColor: AppColors.APP_WHITE_COLOR,
-                    height: 40,
+                          height: 40,
                           onPressed: () {
                             if (jobs.length > 0) {
                               startJob();
@@ -475,7 +485,7 @@ class _StartJobViewState extends State<StartJobView> {
             quantity: job.quantity,
             companyId: companyId,
             jobFlag: "STARTED",
-            jobHours: '0',
+            jobHours: job.jobHours,
             pdfFileName: job.pdfFileName,
             pdfUrl: job.pdfUrl,
             imageFileName: '',

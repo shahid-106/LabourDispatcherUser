@@ -27,13 +27,13 @@ class _JobsListState extends State<JobsList> {
     prefs.then((value) {
       companyId = value.getString('companyId');
       pin = value.getString('pin');
-      api.getAllJobs(companyId, pin).then((value) {
+      api.getAllJobsForReport(companyId, pin).then((value) {
         jobs = value;
         isLoading = false;
         setState(() { });
       });
 
-      jobLogApi.getJobLogs(companyId).then((value) {
+      jobLogApi.getJobLogs(companyId, pin).then((value) {
         jobLogs = value;
         isLoading = false;
         setState(() { });
@@ -57,7 +57,7 @@ class _JobsListState extends State<JobsList> {
         address = data.join(', ');
       }
       var jobLog = jobLogs.firstWhere((element) => element.jobNumber == job.jobNumber, orElse: () => null);
-      print(jobLog);
+      // print(jobLog);
       showDialog(
           context: context,
           builder: (_) => Dialog(

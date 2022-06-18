@@ -8,6 +8,7 @@ import 'package:ios_user_labor_dispatch_1/model/jobLog.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/buttons.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/decoration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocationView extends StatefulWidget {
   _LocationViewState createState() => new _LocationViewState();
@@ -33,11 +34,11 @@ class _LocationViewState extends State<LocationView> {
       companyId = value.getString('companyId');
       pin = value.getString('pin');
       getJobs();
-      jobLogApi.getJobLogsCount(companyId, pin).then((value) {
-        jobLogCount = value;
-        // print(jobLogCount);
-        setState(() {});
-      });
+      // jobLogApi.getJobLogsCount(companyId, pin).then((value) {
+      //   jobLogCount = value;
+      //   // print(jobLogCount);
+      //   setState(() {});
+      // });
     });
     super.initState();
   }
@@ -60,8 +61,17 @@ class _LocationViewState extends State<LocationView> {
   getJobLog() {
     jobLogApi.getJobLog(job.jobNumber).then((value) {
       jobLog = value;
+      print(jobLog.startLatitude);
+      print(jobLog.startLongitude);
+      print(jobLog.startLatitude);
+      print(jobLog.stopLatitude);
       setState(() {});
     });
+  }
+
+  Future<void> openMap(double latitude, double longitude) async {
+    String googleUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    await launch(googleUrl);
   }
 
   @override
@@ -96,6 +106,7 @@ class _LocationViewState extends State<LocationView> {
               onChanged: (value) async {
                 setState(() {
                   job = value;
+                  getJobLog();
                 });
               },
             )));
@@ -114,13 +125,15 @@ class _LocationViewState extends State<LocationView> {
                   Text(
                     'Click below to select a different Job Number:',
                     style: TextStyle(
-                      color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                   SizedBox(height: 10),
                   jobsDropdown,
                   SizedBox(height: 10),
-                  Text('${job.jobDate ?? 'Job Date'}'),
+                  Text('${job.jobDate != null ? job.jobDate.split(' ')[0] : 'Job Date'}'),
                   SizedBox(
                     height: 10,
                   ),
@@ -142,7 +155,7 @@ class _LocationViewState extends State<LocationView> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.jobHours ?? 'Job Hours'}'),
+                  job.jobHours != null && job.jobHours != "null" ? Text('${job.jobHours}') : Text('Job Hours'),
                 ],
               ),
             ),
@@ -152,8 +165,8 @@ class _LocationViewState extends State<LocationView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Start GPS', style: TextStyle(color: AppColors.APP_GREY_COLOR, fontWeight: FontWeight.bold),),
-                Text('Stop GPS', style: TextStyle(color: AppColors.APP_GREY_COLOR, fontWeight: FontWeight.bold),),
+                Text(jobLog.startLatitude != "" && jobLog.startLongitude != "" && jobLog.startLatitude != null && jobLog.startLongitude != null ? '${double.parse(jobLog.startLatitude).toStringAsFixed(2)}, ${double.parse(jobLog.startLongitude).toStringAsFixed(2)}': 'Start GPS', style: TextStyle(color: AppColors.APP_GREY_COLOR, fontWeight: FontWeight.bold),),
+                Text(jobLog.stopLatitude != "" && jobLog.stopLongitude != "" && jobLog.stopLatitude != null && jobLog.stopLongitude != null ? '${double.parse(jobLog.stopLatitude).toStringAsFixed(2)}, ${double.parse(jobLog.stopLongitude).toStringAsFixed(2)}': 'Stop GPS', style: TextStyle(color: AppColors.APP_GREY_COLOR, fontWeight: FontWeight.bold),),
               ],
             ),
             SizedBox(
@@ -170,7 +183,9 @@ class _LocationViewState extends State<LocationView> {
                   height: 40,
                   onPressed: () {
                     if (jobs.length > 0) {
-
+                      if(jobLog.startLatitude != '' && jobLog.startLongitude != null){
+                        openMap(double.parse(jobLog.startLatitude), double.parse(jobLog.startLongitude));
+                      }
                     }
                   },
                 ),
@@ -182,7 +197,9 @@ class _LocationViewState extends State<LocationView> {
                   height: 40,
                   onPressed: () {
                     if (jobs.length > 0) {
-
+                      if(jobLog.stopLatitude != '' && jobLog.stopLongitude != null){
+                        openMap(double.parse(jobLog.stopLatitude), double.parse(jobLog.stopLongitude));
+                      }
                     }
                   },
                 ),
@@ -192,6 +209,7 @@ class _LocationViewState extends State<LocationView> {
         ),
       );
     }
+
 
     return Scaffold(
       appBar: AppBar(

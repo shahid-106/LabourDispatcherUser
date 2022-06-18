@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ios_user_labor_dispatch_1/configs/app_colors.dart';
@@ -9,7 +12,12 @@ import 'package:ios_user_labor_dispatch_1/model/jobLog.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/buttons.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/decoration.dart';
 import 'package:ios_user_labor_dispatch_1/shared_widgets/loader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../controller/pdf_api.dart';
+import '../shared_widgets/toast.dart';
 
 class Export extends StatefulWidget {
   _ExportState createState() => new _ExportState();
@@ -23,6 +31,7 @@ class _ExportState extends State<Export> {
   var companyId, pin;
   List<Job> jobs = new List();
   Job job = new Job();
+  PdfApi pdfApi = new PdfApi();
   JobApi api = new JobApi();
   JobLog jobLog = new JobLog();
   JobLogApi jobLogApi = new JobLogApi();
@@ -52,7 +61,7 @@ class _ExportState extends State<Export> {
   }
 
   getJobs() {
-    api.getAllJobs(companyId, pin).then((value) {
+    api.getAllJobsForReport(companyId, pin).then((value) {
       jobs = value;
       if (jobs.length > 0) {
         job = jobs[0];
@@ -123,7 +132,9 @@ class _ExportState extends State<Export> {
                   Text(
                     'Click below to select a different Job Number:',
                     style: TextStyle(
-                      color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        color: AppColors.APP_LIGHT_GREEN_COLOR,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                   SizedBox(height: 10),
@@ -151,7 +162,7 @@ class _ExportState extends State<Export> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text('${job.jobHours ?? 'Job Hours'}'),
+                  Text('${job.jobHours == "null" || job.jobHours.isEmpty ? 'Job Hours' : job.jobHours}'),
                 ],
               ),
             ),
@@ -267,7 +278,7 @@ class _ExportState extends State<Export> {
                   height: 40,
                   onPressed: () {
                     if (jobs.length > 0) {
-
+                      exportJobs(jobs);
                     }
                   },
                 ),
@@ -279,7 +290,7 @@ class _ExportState extends State<Export> {
                   height: 40,
                   onPressed: () {
                     if (jobs.length > 0) {
-
+                      exportJob(job.toJson().toString(), job.jobNumber);
                     }
                   },
                 ),
@@ -316,6 +327,26 @@ class _ExportState extends State<Export> {
       ),
       body: isLoading ? Loader() : screenUI(),
     );
+  }
+
+  exportJob(String str, String jobNumber) async {
+    Map<Permission, PermissionStatus> statuses = await [Permission.storage].request();
+    if(statuses[Permission.storage].isGranted){
+      final pdfFile = await PdfApi.generateCenteredText([str], jobNumber);
+      ToastUtil.showToast(context, 'Job Exported\nFile Saved at ${pdfFile.path}');
+    }
+  }
+
+  exportJobs(List<Job> jobs) async {
+    Map<Permission, PermissionStatus> statuses = await [Permission.storage].request();
+    List<String> jsons = <String>[];
+    for(var i=0;i<jobs.length;i++){
+      jsons.add(jobs[i].toJson().toString());
+    }
+    if(statuses[Permission.storage].isGranted){
+      final pdfFile = await PdfApi.generateCenteredText(jsons, 'AllJobs', pages: jobs.length);
+      ToastUtil.showToast(context, 'All Jobs Exported\nFile Saved at ${pdfFile.path}');
+    }
   }
 
 }

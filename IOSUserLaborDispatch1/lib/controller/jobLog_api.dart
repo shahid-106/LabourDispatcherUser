@@ -9,14 +9,13 @@ import 'package:ios_user_labor_dispatch_1/model/jobLog.dart';
 class JobLogApi {
   final dbRef = FirebaseDatabase.instance.reference().child('JOB_LOG');
 
-  Future<List<JobLog>> getJobLogs(String companyId) async {
-
+  Future<List<JobLog>> getJobLogs(String companyId, String pin) async {
+  print(pin);
     List<JobLog> userJobLogs = [];
     await dbRef
-        // .orderByChild('jobDate')
-    .once().then((result) async {
+        .orderByChild('jobPin').equalTo(pin).once().then((result) async {
       if (result.value != null) {
-        result.value.forEach((key, childSnapshot) {
+        result.value.forEach((childSnapshot) {
           userJobLogs.add(JobLog.fromJson(Map.from(childSnapshot)));
         });
         userJobLogs = userJobLogs.where((element) => element.companyId == companyId.toUpperCase()).toList();
@@ -52,13 +51,13 @@ class JobLogApi {
 
     List<JobLog> userJobLogs = [];
     var count = 0;
-    await dbRef.orderByChild('uid')
-        .once().then((result) async {
+    await dbRef.orderByChild('companyId').equalTo(companyId.toUpperCase()).once().then((result) async {
       if (result.value != null) {
         result.value.forEach((childSnapshot) {
           userJobLogs.add(JobLog.fromJson(Map.from(childSnapshot)));
         });
-        userJobLogs = userJobLogs.where((element) => element.companyId == companyId.toUpperCase()).toList();
+        userJobLogs = userJobLogs.where((element) => element.jobPin == pin).toList();
+        // userJobLogs = userJobLogs.where((element) => element.companyId == companyId.toUpperCase()).toList();
         userJobLogs.sort((a, b) => int.parse(b.uid) - int.parse(a.uid));
         count = int.parse(userJobLogs[0].uid);
       } else {
